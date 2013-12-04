@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Who's on-line?</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.1.2/handlebars.min.js"></script>
+<style>
+	body {
+		background-color: #4b5055;
+	}
+	
+	.container {
+		color: white;
+		max-width: 270px;
+		margin: 0 auto;
+	}
+	
+	@media (min-width: 768px) {
+		
+	}
+	
+	.avatar {
+		border-radius: 50%;
+		-moz-border-radius: 50%;
+		-webkit-border-radius: 50%;
+		margin-bottom: -12px;
+	}
+	
+	.fa {
+		margin: 5px 0px 5px 30px;
+	}
+</style>
+
+</head>
+<body>
+<div class="container">
+	<h1>Who's @ office?</h1>
+	<div id="content">
+	</div>
+</div>
+<script id="user-template" type="text/x-handlebars-template">
+	<div class="row"> 
+		<img src="{{avatar}}" width="80" height="80" alt="{{user}}" class="avatar">
+		<i class="fa fa-mobile fa-5x"></i>
+		<i class="fa fa-laptop fa-5x"></i>
+	</div>
+</script>
+<script>
+	var users = [];
+	var template = Handlebars.compile($("#user-template").html());
+		
+	$.get("users.json", function(data) {
+		users = data;
+		updateView();
+	});
+
+	var machines = {};
+	$.get("machines-online.xml", function(data) {
+		$.each(data.getElementsByTagName("address"), function() {
+			if (this.getAttribute("addrtype") === "mac") {
+				console.log(this.getAttribute("addr"));
+				machines[this.getAttribute("addr").toUpperCase()] = 1;
+			}
+		});
+		updateView();
+	});
+	
+	function updateView() {
+		var container = $("#content");
+		container.html("");
+		$.each(users, function() {
+			if (machines[this.phone] == 1) {
+				console.log(this.name + " phone is online");
+			} else {
+				console.log(this.name + " phone is offline");
+			}
+			console.log(this.computer);
+			if (machines[this.computer] == 1) {
+				console.log(this.name + " computer is online");
+			} else {
+				console.log(this.name + " computer is offline");
+			}
+			container.append(template(this));
+		});
+	}
+	
+</script>
+</body>
+</html>
