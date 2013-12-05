@@ -6,11 +6,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.1.2/handlebars.min.js"></script>
 <style>
 	body {
 		background-color: #4b5055;
+		font-family: Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
 	}
 	
 	.container {
@@ -28,25 +30,52 @@
 		-moz-border-radius: 50%;
 		-webkit-border-radius: 50%;
 		margin-bottom: -12px;
+		border: 1px solid white;
 	}
 	
 	.fa {
 		margin: 5px 0px 5px 30px;
+	}
+	
+	.red {
+		color: red;
+	}
+	
+	.green {
+		color: #4AFF42;
+	}
+	
+	h1, p {
+		text-align: center;
+		margin-bottom: 5px;
+	}
+	
+	.row {
+		margin: 25px 0;
 	}
 </style>
 
 </head>
 <body>
 <div class="container">
-	<h1>Who's @ office?</h1>
+	<h1>Who's @ Office?</h1>
+	<small><p id="date"></p></small>
 	<div id="content">
 	</div>
 </div>
 <script id="user-template" type="text/x-handlebars-template">
 	<div class="row"> 
-		<img src="{{avatar}}" width="80" height="80" alt="{{user}}" class="avatar">
-		<i class="fa fa-mobile fa-5x"></i>
-		<i class="fa fa-laptop fa-5x"></i>
+		<img src="{{user.avatar}}" width="80" height="80" alt="{{user.user}}" class="avatar">
+		{{#if phoneOnline}}
+			<i class="fa fa-mobile fa-4x green"></i>
+		{{else}}
+			<i class="fa fa-mobile fa-4x red"></i>
+		{{/if}}
+		{{#if computerOnline}}
+			<i class="fa fa-laptop fa-4x green"></i>
+		{{else}}
+			<i class="fa fa-laptop fa-4x red"></i>
+		{{/if}}
 	</div>
 </script>
 <script>
@@ -62,32 +91,32 @@
 	$.get("machines-online.xml", function(data) {
 		$.each(data.getElementsByTagName("address"), function() {
 			if (this.getAttribute("addrtype") === "mac") {
-				console.log(this.getAttribute("addr"));
 				machines[this.getAttribute("addr").toUpperCase()] = 1;
 			}
 		});
+		var start = data.getElementsByTagName("nmaprun")[0].getAttribute("startstr");
+		$("#date").text(start);
 		updateView();
 	});
 	
+	var latch = 1;
 	function updateView() {
+		if (latch == 1) {
+			latch--;
+			return;
+		}
 		var container = $("#content");
 		container.html("");
 		$.each(users, function() {
-			if (machines[this.phone] == 1) {
-				console.log(this.name + " phone is online");
-			} else {
-				console.log(this.name + " phone is offline");
-			}
-			console.log(this.computer);
-			if (machines[this.computer] == 1) {
-				console.log(this.name + " computer is online");
-			} else {
-				console.log(this.name + " computer is offline");
-			}
-			container.append(template(this));
+			result = { 	
+				user : this,
+				phoneOnline : (machines[this.phone] == 1),
+				computerOnline : (machines[this.computer] == 1)
+			};
+			console.log(result);
+			container.append(template(result));
 		});
 	}
-	
 </script>
 </body>
 </html>
