@@ -1,0 +1,1 @@
+sudo nmap -sn  192.168.1.63-253 -oX machines-online.xml > /dev/null && cat
