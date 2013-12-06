@@ -19,12 +19,9 @@
 	
 	.container {
 		color: white;
+		text-align: center;
 		max-width: 270px;
 		margin: 0 auto;
-	}
-	
-	@media (min-width: 768px) {
-		
 	}
 	
 	.avatar {
@@ -48,7 +45,7 @@
 	}
 	
 	h1, p {
-		text-align: center;
+		
 		margin-bottom: 5px;
 	}
 	
@@ -56,7 +53,6 @@
 		margin: 25px 0;
 	}
 </style>
-
 </head>
 <body>
 <div class="container">
@@ -80,29 +76,36 @@
 		{{/if}}
 	</div>
 </script>
+<script id="hosts-template" type="text/x-handlebars-template">
+	<div class="row"> 
+		<small>Found {{hosts}} unnamed hosts on the network</small>
+	<div class="row"> 
+</script>
 <script>
 	var users = [];
-	var template = Handlebars.compile($("#user-template").html());
+	var userTemplate = Handlebars.compile($("#user-template").html());
+	var hostsTemplate = Handlebars.compile($("#hosts-template").html());
 		
 	$.get("users.json", function(data) {
 		users = data;
 		updateView();
 	});
 
-	var machines = {};
+	
 	$.get("machines-online.xml", function(data) {
+		var machines = {};
 		$.each(data.getElementsByTagName("address"), function() {
 			if (this.getAttribute("addrtype") === "mac") {
 				machines[this.getAttribute("addr").toUpperCase()] = 1;
 			}
 		});
 		var start = data.getElementsByTagName("nmaprun")[0].getAttribute("startstr");
-		$("#date").text(start);
-		updateView();
+		updateView(machines, start);
 	});
 	
 	var latch = 1;
-	function updateView() {
+	function updateView(machines, start) {
+		$("#date").text(start);
 		if (latch == 1) {
 			latch--;
 			return;
@@ -115,9 +118,12 @@
 				phoneOnline : (machines[this.phone] == 1),
 				computerOnline : (machines[this.computer] == 1)
 			};
-			console.log(result);
-			container.append(template(result));
+			delete machines[this.phone];
+			delete machines[this.computer];
+			console.log(machines);
+			container.append(userTemplate(result));
 		});
+		container.append(hostsTemplate({ hosts : Object.keys(machines).length }));
 	}
 </script>
 </body>
