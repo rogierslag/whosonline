@@ -11,14 +11,27 @@
 <link rel="apple-touch-icon" href="/img/logo_88.png">
 <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.1.2/handlebars.min.js"></script>
+<script src="//cdn.magnet.me/lib/js/moment-with-langs-2.3.1.min.js"></script>
 <style>
 	body {
-		background-color: #4b5055;
+		background-color: #fbfbfb;
 		font-family: Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+		margin: 0px;
+		padding: 0px;
 	}
 	
-	.container {
+	header {
+		background-color: #292e33;
 		color: white;
+		height: 54px;
+	}
+	
+	header > div > p {
+		margin-top: 0px;
+		padding-top: 5px;
+		line-height: 44px;
+	}
+	.container {
 		text-align: center;
 		max-width: 270px;
 		margin: 0 auto;
@@ -36,29 +49,42 @@
 		margin: 5px 0px 5px 30px;
 	}
 	
-	.red {
-		color: red;
-	}
+	.red { color: #c3c8cd; }
 	
 	.green {
-		color: #4AFF42;
+		color: #292e33;
+		border-bottom: 2px dashed green;
 	}
 	
-	h1, p {
-		
-		margin-bottom: 5px;
-	}
+	h1, p {	margin-bottom: 5px; }
 	
 	.row {
-		margin: 25px 0;
+		margin: 10px 0;
+		padding: 5px;
+		background-color: #FFF;
+		border-radius: 5px;
+		border: 1px solid #c3c8cd;
+	}
+	
+	.float-right { float:right; }
+
+	.float-left { 
+		float:left;
+		margin-left: 9px;
 	}
 </style>
 </head>
 <body>
+	<header>
+		<div class="container">
+			<p><i class="fa fa-building-o fa-2x float-left"></i>
+			<span id="date"></span>
+			<a class="float-right" onclick="refresh()"><i class="fa fa-refresh"></i></a>
+		</div>
+	</header>
 <div class="container">
-	<h1>Who's @ Office?</h1>
-	<small><p id="date"></p></small>
 	<div id="content">
+		<p>Loading...
 	</div>
 </div>
 <script id="user-template" type="text/x-handlebars-template">
@@ -77,40 +103,42 @@
 	</div>
 </script>
 <script id="hosts-template" type="text/x-handlebars-template">
-	<div class="row"> 
-		<small>Found {{hosts}} unnamed hosts on the network</small>
-	<div class="row"> 
+	<small>Found {{hosts}} unnamed hosts on the network</small>
 </script>
 <script>
 	var users = [];
 	var userTemplate = Handlebars.compile($("#user-template").html());
 	var hostsTemplate = Handlebars.compile($("#hosts-template").html());
-		
+	var latch = 1;
+	var container = $("#content");
+	
 	$.get("users.json", function(data) {
 		users = data;
 		updateView();
 	});
 
-	
-	$.get("machines-online.xml", function(data) {
-		var machines = {};
-		$.each(data.getElementsByTagName("address"), function() {
-			if (this.getAttribute("addrtype") === "mac") {
-				machines[this.getAttribute("addr").toUpperCase()] = 1;
-			}
+	function refresh() {
+		container.html("<p>loading...</p>");
+		$.get("machines-online.xml", function(data) {
+			var machines = {};
+			$.each(data.getElementsByTagName("address"), function() {
+				if (this.getAttribute("addrtype") === "mac") {
+					machines[this.getAttribute("addr").toUpperCase()] = 1;
+				}
+			});
+			start = data.getElementsByTagName("nmaprun")[0].getAttribute("startstr");
+			start = moment(start).format("ddd Do, HH:mm:ss");
+			updateView(machines, start);
 		});
-		var start = data.getElementsByTagName("nmaprun")[0].getAttribute("startstr");
-		updateView(machines, start);
-	});
+	}
 	
-	var latch = 1;
 	function updateView(machines, start) {
 		$("#date").text(start);
 		if (latch == 1) {
 			latch--;
 			return;
 		}
-		var container = $("#content");
+
 		container.html("");
 		$.each(users, function() {
 			result = { 	
@@ -125,6 +153,7 @@
 		});
 		container.append(hostsTemplate({ hosts : Object.keys(machines).length }));
 	}
+	refresh();
 </script>
 </body>
 </html>
