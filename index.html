@@ -24,12 +24,19 @@
 		background-color: #292e33;
 		color: white;
 		height: 54px;
+		position: fixed;
+		width: 100%;
+		top: 0px;
 	}
 	
 	header > div > p {
 		margin-top: 0px;
 		padding-top: 5px;
 		line-height: 44px;
+	}
+	
+	section {
+		margin-top: 63px;
 	}
 	.container {
 		text-align: center;
@@ -53,7 +60,7 @@
 	
 	.green {
 		color: #292e33;
-		border-bottom: 2px dashed green;
+		border-bottom: 2px solid green;
 	}
 	
 	h1, p {	margin-bottom: 5px; }
@@ -82,23 +89,29 @@
 			<a class="float-right" onclick="refresh()"><i class="fa fa-refresh"></i></a>
 		</div>
 	</header>
-<div class="container">
-	<div id="content">
-		<p>Loading...
-	</div>
+	<section>
+		<div class="container">
+			<div id="content">
+				<p>Loading...
+		</div>
+	</section>
 </div>
 <script id="user-template" type="text/x-handlebars-template">
 	<div class="row"> 
-		<img src="{{user.avatar}}" width="80" height="80" alt="{{user.user}}" class="avatar">
-		{{#if phoneOnline}}
-			<i class="fa fa-mobile fa-4x green"></i>
+		{{#if user.avatar}}
+			<img src="https://gravatar.com/avatar/{{user.avatar}}?d=identicon&s=60" width="60" height="60" 	alt="{{user.name}}" class="avatar">
 		{{else}}
-			<i class="fa fa-mobile fa-4x red"></i>
+			<span>{{user.name}}</span>
+		{{/if}}
+		{{#if phoneOnline}}
+			<i class="fa fa-mobile fa-3x green"></i>
+		{{else}}
+			<i class="fa fa-mobile fa-3x red"></i>
 		{{/if}}
 		{{#if computerOnline}}
-			<i class="fa fa-laptop fa-4x green"></i>
+			<i class="fa fa-laptop fa-3x green"></i>
 		{{else}}
-			<i class="fa fa-laptop fa-4x red"></i>
+			<i class="fa fa-laptop fa-3x red"></i>
 		{{/if}}
 	</div>
 </script>
