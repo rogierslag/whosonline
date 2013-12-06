@@ -107,20 +107,31 @@
 		{{else}}
 			<span>{{user.name}}</span>
 		{{/if}}
-		{{#if phoneOnline}}
-			<i class="fa fa-mobile fa-3x green"></i>
+		{{#if user.phone}}
+			{{#if phoneOnline}}
+				<i class="fa fa-mobile fa-3x green"></i>
+			{{else}}
+				<i class="fa fa-mobile fa-3x red"></i>
+			{{/if}}
 		{{else}}
-			<i class="fa fa-mobile fa-3x red"></i>
+			<i class="fa fa-question fa-3x red"></i>
 		{{/if}}
-		{{#if computerOnline}}
-			<i class="fa fa-laptop fa-3x green"></i>
+		{{#if user.computer}}
+			{{#if computerOnline}}
+				<i class="fa fa-laptop fa-3x green"></i>
+			{{else}}
+				<i class="fa fa-laptop fa-3x red"></i>
+			{{/if}}
 		{{else}}
-			<i class="fa fa-laptop fa-3x red"></i>
+			<i class="fa fa-question fa-3x red"></i>
 		{{/if}}
 	</div>
 </script>
 <script id="hosts-template" type="text/x-handlebars-template">
-	<small>Found {{hosts}} unnamed hosts on the network</small>
+	<footer>
+		<p><small>Found {{hosts}} unnamed hosts on the network</small></p>
+		<p><small>If you see a questionmark for you device the device is not yet registered.<small></p>
+	</footer>
 </script>
 <script>
 	var users = [];
@@ -165,7 +176,7 @@
 			};
 			delete machines[this.phone];
 			delete machines[this.computer];
-			console.log(machines);
+			//console.log(machines);
 			container.append(userTemplate(result));
 		});
 		container.append(hostsTemplate({ hosts : Object.keys(machines).length }));
