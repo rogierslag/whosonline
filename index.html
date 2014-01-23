@@ -44,7 +44,7 @@
 	}
 	.container {
 		text-align: center;
-		max-width: 270px;
+		max-width: 320px;
 		margin: 0 auto;
 	}
 	
@@ -125,7 +125,17 @@
 		{{else}}
 			<i class="fa fa-question fa-3x red"></i>
 		{{/if}}
-	</div>
+		{{#if user.tablet}}
+			{{#if tabletOnline}}
+				<i class="fa fa-tablet fa-3x green"></i>
+			{{else}}
+				<i class="fa fa-tablet fa-3x red"></i>
+			{{/if}}
+		{{else}}
+			<i class="fa fa-question fa-3x red"></i>
+		{{/if}}
+	
+</div>
 </script>
 <script id="hosts-template" type="text/x-handlebars-template">
 	<footer>
@@ -172,10 +182,12 @@
 			result = { 	
 				user : this,
 				phoneOnline : (machines[this.phone] == 1),
-				computerOnline : (machines[this.computer] == 1)
+				computerOnline : (machines[this.computer] == 1),
+				tabletOnline : (machines[this.tablet] == 1)
 			};
 			delete machines[this.phone];
 			delete machines[this.computer];
+			delete machines[this.tablet];
 			//console.log(machines);
 			container.append(userTemplate(result));
 		});

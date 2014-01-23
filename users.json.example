@@ -3,6 +3,7 @@
 	"name" : "John",
 	"avatar" : "yourEmailHash",
 	"phone" : "AA:AA:AA:AA:AA:AA",
-	"computer" : "AA:AA:AA:AA:AA:AA"
+	"computer" : "AA:AA:AA:AA:AA:AA",
+	"tablet" : "AA:AA:AA:AA:AA:AA"
 }
 ]
