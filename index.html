@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Who's on-line?</title>
+<title>Who's online?</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=0.85">
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -100,7 +100,7 @@
 		{{else}}
 			<span>{{user.name}}</span>
 		{{/if}}
-		{{#if user.phone}}
+		{{#if user.phones}}
 			{{#if phoneOnline}}
 				<i class="fa fa-mobile fa-3x green"></i>
 			{{else}}
@@ -109,7 +109,7 @@
 		{{else}}
 			<i class="fa fa-question fa-3x red"></i>
 		{{/if}}
-		{{#if user.computer}}
+		{{#if user.computers}}
 			{{#if computerOnline}}
 				<i class="fa fa-laptop fa-3x green"></i>
 			{{else}}
@@ -118,7 +118,7 @@
 		{{else}}
 			<i class="fa fa-question fa-3x red"></i>
 		{{/if}}
-		{{#if user.tablet}}
+		{{#if user.tablets}}
 			{{#if tabletOnline}}
 				<i class="fa fa-tablet fa-3x green"></i>
 			{{else}}
@@ -171,17 +171,25 @@
 		$.each(users, function() {
 			result = { 	
 				user : this,
-				phoneOnline : (machines[this.phone] == 1),
-				computerOnline : (machines[this.computer] == 1),
-				tabletOnline : (machines[this.tablet] == 1)
+				phoneOnline : checkForDevice(machines, this.phones),
+				computerOnline : checkForDevice(machines, this.computers),
+				tabletOnline : checkForDevice(machines, this.tablets)
 			};
-			delete machines[this.phone];
-			delete machines[this.computer];
-			delete machines[this.tablet];
-			//console.log(machines);
 			container.append(userTemplate(result));
 		});
 		container.append(hostsTemplate({ hosts : Object.keys(machines).length }));
+	}
+
+	function checkForDevice(storedList, detectedList) {
+		if ( detectedList === undefined ) {
+			return false;
+		} else {
+			return $.grep(detectedList, function(mac) {
+				var res = storedList[mac] == 1;
+				delete storedList[mac];
+				return res;
+			}).length>0;
+		}
 	}
 </script>
 </body>
