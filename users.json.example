@@ -1,9 +1,17 @@
 [
 {
-	"name" : "John",
-	"avatar" : "yourEmailHash",
-	"phone" : "AA:AA:AA:AA:AA:AA",
-	"computer" : "AA:AA:AA:AA:AA:AA",
-	"tablet" : "AA:AA:AA:AA:AA:AA"
+	"name" : "Rogier",
+	"fb" : "rogier.slag",
+	"phones" : [
+		"EE:EE:EE:EE:EE:EE",
+		"BB:BB:BB:BB:BB:BB"
+	],
+	"computers" : [
+		"CC:CC:CC:CC:CC:CC",
+		"DD:DD:DD:DD:DD:DD"
+	],
+	"tablets" : [
+		"AA:AA:AA:AA:AA:AA"
+	]
 }
 ]
